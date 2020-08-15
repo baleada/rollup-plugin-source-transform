@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/baleada/rollup-plugin-source-transform.git"
+    "url": "git+https://github.com/baleada/rollup-plugin-source-transform.git"
   },
   "keywords": [
     "baleada",
@@ -23,7 +23,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/baleada/rollup-plugin-source-transform/issues"
+    "url": "https://github.com/baleada/rollup-plugin-source-transform/issues"
   },
   "homepage": "https://baleada.netlify.com",
   "devDependencies": {
