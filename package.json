@@ -1,6 +1,6 @@
 {
   "name": "@baleada/rollup-plugin-source-transform",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "Rollup plugin that allows you to transform files' content during your build step.",
   "type": "module",
   "main": "lib/index.cjs",
