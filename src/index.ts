@@ -4,31 +4,32 @@ import type { FilterPattern } from '@rollup/pluginutils'
 
 const { createFilter } = pluginUtils
 
-type SourceTransformOptions = {
-  transform?: ((api: SourceTransformApi) => TransformResult) | ((api: SourceTransformApi) => Promise<TransformResult>),
+export type Options = {
+  transform?: ((api: Api) => TransformResult) | ((api: Api) => Promise<TransformResult>),
   include?: FilterPattern,
   exclude?: FilterPattern,
-  test?: (api: SourceTestApi) => boolean
+  test?: Test
 }
 
-type SourceTransformApi = {
+type Test = (api: TestApi) => boolean
+
+type TestApi = {
+  id?: string,
+  source?: string,
+}
+
+export type Api = {
   source: string,
   id: string,
   context: TransformPluginContext,
   utils: typeof pluginUtils
 }
 
-type SourceTestApi = {
-  source: string,
-  id: string,
-  createFilter: typeof createFilter
-}
-
-const defaultOptions: SourceTransformOptions = {
+const defaultOptions: Options = {
   transform: ({ source}) => source,
 }
 
-export default function sourceTransform (options: SourceTransformOptions = {}): Plugin {
+export function sourceTransform (options: Options = {}): Plugin {
   const { transform, include, exclude, test: rawTest } = { ...defaultOptions, ...options },
         test = ensureTest({ include, exclude, rawTest })
 
@@ -37,7 +38,7 @@ export default function sourceTransform (options: SourceTransformOptions = {}): 
   return {
     name: 'source-transform',
     async transform (source, id) {
-      if (!test({ source, id, createFilter })) {
+      if (!test({ source, id })) {
         return null
       }
 
@@ -51,8 +52,11 @@ export default function sourceTransform (options: SourceTransformOptions = {}): 
   }
 }
 
-function ensureTest ({ include, exclude, rawTest }: { include?: FilterPattern, exclude?: FilterPattern, rawTest?: (api: SourceTestApi) => boolean }) {
-  return typeof rawTest === 'function'
-    ? rawTest
-    : ({ id, createFilter }) => createFilter(include, exclude)(id)
+function ensureTest ({ include, exclude, rawTest }: { include?: FilterPattern, exclude?: FilterPattern, rawTest?: Test }): Test {
+  if (typeof rawTest === 'function') {
+    return rawTest
+  }
+
+  const filter = createFilter(include, exclude)
+  return ({ id }) => filter(id)
 }
